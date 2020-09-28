@@ -1,0 +1,341 @@
+swagger: "2.0"
+
+info:
+  description: "Supermarket es un a API que se conecta a una base de datos que se encarga de guardar la información de los productos de un supermercado"
+  version: "1.0.0"
+  title: "Supermarket Ms"
+  
+tags:
+- name: "cursos"
+  description: "Operaciones relacionadas con las categorias disponibles en el supermercado"
+
+- name: "estudiantes"
+  description: "Operaciones relacionadas con los productos disponibles en el supermercado"
+  
+schemes:
+- "http"
+
+paths:
+
+  /cursos:
+
+    get:
+      tags:
+      - "cursos"
+      summary: "Obtiene una lista de todos los cursos disponibles en la base de datos"
+      operationId: "getCursos"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: array
+            items:
+              type: "object"
+              required:
+              - "id"
+              - "grado"
+              - "letra"
+              properties:
+                id:
+                  type: "string"
+                grado:
+                  type: "integer"
+                letra:
+                  type: "string"
+                  maxLength: 2
+              
+    post:
+      tags:
+      - "cursos"
+      summary: "Añade un nuevo curso a la base de datos"
+      operationId: "addCursos"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Datos del curso que se desea añadir a la base de datos"
+        required: true
+        schema:
+          type: object
+          required:
+           - "grado"
+           - "letra"
+          properties:
+            grado:
+              type: "integer"
+            letra:
+              type: "string"
+      responses:
+        "201":
+          description: "Created"
+          schema:
+            type: "object"
+            required:
+              - "id"
+              - "grado"
+              - "letra"
+            properties:
+              id:
+                type: "string"
+              grado:
+                type: "integer"
+              letra:
+                type: "string"
+                maxLength: 2
+        "400":
+          description: "Bad Request"
+          schema:
+            type: object
+            properties:
+              grado::
+                type: string
+              letra:
+                type: string
+              
+  /cursos/{id}:
+  
+    get:
+      tags:
+      - "cursos"
+      summary: "Busca un curso por su id en la base de datos"
+      operationId: "findCursosById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Id del curso que se quiere buscar en la base de datos"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Curso"
+        "404":
+          description: "Not Found"
+          schema:
+           type: object
+           properties:
+            detail:
+              type: string
+
+    delete:
+      tags:
+      - "cursos"
+      summary: "Borrar un curso existente en la base de datos y todos los estudiantes asociados a el"
+      operationId: "deleteCursos"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Id del curso que se quiere eliminar en la base de datos"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/Curso"
+        "404":
+          description: "Not Found"
+          schema:
+           type: object
+           properties:
+            detail:
+              type: string
+
+
+  /estudiantes:
+  
+    get:
+      tags:
+      - "estudiantes"
+      summary: "Obteniene todos los estudiantes de la base de datos"
+      operationId: "getEstudiantes"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Estudiante'
+  
+    post:
+      tags:
+      - "estudiantes"
+      summary: "Añade un nuevo estudiante a la base de datos"
+      operationId: "addEstudiantes"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Datos del estudiante que se desea añadir a la base de datos"
+        required: true
+        schema:
+          type: object
+          properties:
+            id:
+              type: string
+            id_curso:
+              type: string
+            
+      responses:
+        "201":
+          description: "Created"
+          schema:
+            $ref: '#/definitions/Estudiante'
+        "400":
+          description: "Bad Request"
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+              id_curso:
+                type: string
+              
+  /estudiantes/{id}:
+  
+    get:
+      tags:
+      - "estudiantes"
+      summary: "Busca un estudiante por su id en la base de datos"
+      operationId: "findEstudiantesById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Id del estudiante que se quiere buscar en la base de datos"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: '#/definitions/Estudiante'
+        "404":
+          description: "Not Found"
+          schema:
+           type: object
+           properties:
+            detail:
+              type: string
+
+    put:
+      tags:
+      - "estudiantes"
+      summary: "Actualiza un estudiante existente en la base de datos"
+      operationId: "updateEstudiantes"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Id del estudiante que se quiere actualizar en la base de datos"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Curso nuevo del estudiante indicado"
+        required: true
+        schema:
+          type: object
+          properties:
+            id_curso:
+              type: string
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Estudiante"
+        "400":
+          description: "Bad Request"
+          schema:
+            type: object
+            properties:
+              id_curso:
+                type: string
+        "404":
+          description: "Not Found"
+          schema:
+           type: object
+           properties:
+            detail:
+              type: string
+
+    delete:
+      tags:
+      - "estudiantes"
+      summary: "Borrar un estudiante existente en la base de datos"
+      operationId: "deleteEstudiantes"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Id del estudiante que se quiere eliminar en la base de datos"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+           $ref: "#/definitions/Estudiante"
+        "404":
+          description: "Not Found"
+          schema:
+           type: object
+           properties:
+            detail:
+              type: string
+
+
+definitions:
+
+  Curso:
+    type: "object"
+    required:
+    - "id"
+    - "grado"
+    - "letra"
+    properties:
+      id:
+        type: "string"
+      grado:
+        type: "integer"
+      letra:
+        type: "string"
+        maxLength: 2
+      id_estudiantes:
+        type: "array"
+        items:
+          type: "string"
+  
+  Estudiante:
+    type: "object"
+    required:
+    - "id"
+    - "id_curso"
+    properties:
+      id:
+        type: "string"
+      id_curso:
+        type: "string"
+      curso:
+        type: "object"
+        properties:
+          grado:
+            type: "integer"
+          letra:
+            type: "string"
+            maxLength: 2
+      
