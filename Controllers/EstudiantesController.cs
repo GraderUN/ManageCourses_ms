@@ -72,18 +72,25 @@ namespace ManageCourses_ms.Controllers
                 return BadRequest(ModelState.GetErrorMessages());
 
             var estudiante = await _estudiantesService.GetAsync(id);
-            var result = await _estudiantesService.UpdateAsync(id, _mapper.Map<UpdateEstudiante, Estudiantes>(resource));
-
-            if (!result.Success)
-                return BadRequest(result.Message);
 
             var cursoAnterior = await _cursosService.RemoveStudent(estudiante.Estudiante.id_curso, id);
             if (!cursoAnterior.Success)
-                return BadRequest(result.Message);
+                return BadRequest(cursoAnterior.Message);
 
-            var cursoSiguiente = await _cursosService.AddStudent(result.Estudiante.id_curso, id);
+            var cursoSiguiente = await _cursosService.AddStudent(resource.id_curso, id);
             if (!cursoSiguiente.Success)
+            {
+                await _cursosService.AddStudent(estudiante.Estudiante.id_curso, id);
+                return BadRequest(cursoSiguiente.Message);
+            }
+            
+            var result = await _estudiantesService.UpdateAsync(id, _mapper.Map<UpdateEstudiante, Estudiantes>(resource));
+            if (!result.Success)
+            {
+                await _cursosService.AddStudent(estudiante.Estudiante.id_curso, id);
+                await _cursosService.RemoveStudent(resource.id_curso, id);
                 return BadRequest(result.Message);
+            }
 
             return Ok(result.Estudiante);
         }
@@ -99,7 +106,7 @@ namespace ManageCourses_ms.Controllers
 
             var curso = await _cursosService.RemoveStudent(idCurso, id);
             if (!curso.Success)
-                return BadRequest(result.Message);
+                return BadRequest(curso.Message);
 
             return Ok(result.Estudiante);
         }
