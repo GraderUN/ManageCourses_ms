@@ -1,16 +1,16 @@
 swagger: "2.0"
 
 info:
-  description: "Supermarket es un a API que se conecta a una base de datos que se encarga de guardar la información de los productos de un supermercado"
+  description: "Course Management es un a API que se conecta a una base de datos que se encarga de guardar la información de los cursos y los estudiantes de un colegio"
   version: "1.0.0"
-  title: "Supermarket Ms"
+  title: "Course Management Ms"
   
 tags:
 - name: "cursos"
-  description: "Operaciones relacionadas con las categorias disponibles en el supermercado"
+  description: "Operaciones relacionadas con los cursos disponibles en la base de datos"
 
 - name: "estudiantes"
-  description: "Operaciones relacionadas con los productos disponibles en el supermercado"
+  description: "Operaciones relacionadas con los estudiantes disponibles en la base de datos"
   
 schemes:
 - "http"
