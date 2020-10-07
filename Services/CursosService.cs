@@ -30,6 +30,8 @@ namespace ManageCourses_ms.Services
             if (existingCourse == null)
                 return new CursosResponse("The student must have an existing course id");
 
+            Console.Write(existingCourse);
+
             existingCourse.id_estudiante.Add(studentId);
 
             try

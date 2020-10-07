@@ -47,7 +47,9 @@ namespace ManageCourses_ms.Controllers
 		        return BadRequest(ModelState.GetErrorMessages());
             
             var curso = _mapper.Map<SaveCursosResource, Cursos>(resource);
-            
+
+            curso.id_estudiante = new List<string>();
+
             var result = await _cursosService.SaveAsync(curso);
 
             if (!result.Success)
